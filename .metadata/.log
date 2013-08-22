@@ -1,0 +1,30 @@
+!SESSION 2013-08-22 17:30:22.281 -----------------------------------------------
+eclipse.buildId=I20120608-1400
+java.version=1.7.0_25
+java.vendor=Oracle Corporation
+BootLoader constants: OS=win32, ARCH=x86, WS=win32, NL=en_US
+Framework arguments:  -product org.eclipse.epp.package.cpp.product
+Command-line arguments:  -os win32 -ws win32 -arch x86 -product org.eclipse.epp.package.cpp.product
+
+!ENTRY org.eclipse.ui 4 4 2013-08-22 17:30:40.617
+!MESSAGE Plug-in 'org.eclipse.cdt.ui' contributed an invalid Menu Extension (Path: 'project/org.eclipse.cdt.ui.prjmenu' is invalid): org.eclipse.cdt.ui.manageConfigsAction2
+
+!ENTRY org.eclipse.ui 4 4 2013-08-22 17:30:40.640
+!MESSAGE Plug-in 'org.eclipse.cdt.ui' contributed an invalid Menu Extension (Path: 'project/org.eclipse.cdt.ui.prjmenu' is invalid): org.eclipse.cdt.ui.buildConfigMenuAction
+
+!ENTRY org.eclipse.ui 4 4 2013-08-22 17:30:40.643
+!MESSAGE Plug-in 'org.eclipse.cdt.ui' contributed an invalid Menu Extension (Path: 'project/org.eclipse.cdt.ui.prjmenu' is invalid): org.eclipse.cdt.ui.wsselection
+
+!ENTRY org.eclipse.core.resources 4 77 2013-08-22 17:31:12.073
+!MESSAGE Invalid project description.
+!SUBENTRY 1 unknown 0 0 2013-08-22 17:31:12.073
+!MESSAGE OK
+!SUBENTRY 1 org.eclipse.core.resources 4 77 2013-08-22 17:31:12.073
+!MESSAGE C:\px4\FirmwareIPS\Firmware overlaps the workspace location: C:\px4\FirmwareIPS\Firmware
+
+!ENTRY org.eclipse.core.resources 4 77 2013-08-22 17:33:27.321
+!MESSAGE Invalid project description.
+!SUBENTRY 1 unknown 0 0 2013-08-22 17:33:27.321
+!MESSAGE OK
+!SUBENTRY 1 org.eclipse.core.resources 4 77 2013-08-22 17:33:27.321
+!MESSAGE C:\px4\FirmwareIPS\Firmware overlaps the workspace location: C:\px4\FirmwareIPS\Firmware
