@@ -90,6 +90,7 @@ MODULES		+= examples/flow_speed_control
 # MODULES		+= modules/sdlog2
 MODULES     += modules/sdlogimu
 MODULES     += modules/nocrlf
+MODULES     += modules/lightsout
 
 #
 # Library modules
