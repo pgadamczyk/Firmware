@@ -43,6 +43,7 @@
  *
  * @author Lorenz Meier <lm@inf.ethz.ch>
  * @author Anton Babushkin <anton.babushkin@me.com>
+ *  Modified by Peter Adamczyk <pgadamczyk@yahoo.com>
  */
 
 #include <nuttx/config.h>
@@ -83,6 +84,7 @@
 #include <uORB/topics/airspeed.h>
 #include <uORB/topics/rc_channels.h>
 #include <uORB/topics/esc_status.h>
+#include <uORB/topics/battery_status.h>
 
 #include <systemlib/systemlib.h>
 
@@ -629,7 +631,7 @@ int sdlog2_thread_main(int argc, char *argv[])
 
 	/* --- IMPORTANT: DEFINE NUMBER OF ORB STRUCTS TO WAIT FOR HERE --- */
 	/* number of messages */
-	const ssize_t fdsc = 19;
+	const ssize_t fdsc = 20; // 19; // PGA
 	/* Sanity check variable and index */
 	ssize_t fdsc_count = 0;
 	/* file descriptors to wait for */
@@ -659,6 +661,7 @@ int sdlog2_thread_main(int argc, char *argv[])
 		struct differential_pressure_s diff_pres;
 		struct airspeed_s airspeed;
 		struct esc_status_s esc;
+		struct battery_status_s battery;
 	} buf;
 	memset(&buf, 0, sizeof(buf));
 
@@ -682,6 +685,7 @@ int sdlog2_thread_main(int argc, char *argv[])
 		int rc_sub;
 		int airspeed_sub;
 		int esc_sub;
+		int battery_sub;
 	} subs;
 
 	/* log message buffer: header + body */
@@ -707,6 +711,7 @@ int sdlog2_thread_main(int argc, char *argv[])
 			struct log_GPOS_s log_GPOS;
 			struct log_GPSP_s log_GPSP;
 			struct log_ESC_s log_ESC;
+			struct log_BAT_s log_BAT;
 		} body;
 	} log_msg = {
 		LOG_PACKET_HEADER_INIT(0)
@@ -828,6 +833,12 @@ int sdlog2_thread_main(int argc, char *argv[])
 	fds[fdsc_count].events = POLLIN;
 	fdsc_count++;
 
+	/* --- Battery --- */
+	subs.battery_sub = orb_subscribe(ORB_ID(battery_status));
+	fds[fdsc_count].fd = subs.battery_sub;
+	fds[fdsc_count].events = POLLIN;
+	fdsc_count++;
+
 	/* WARNING: If you get the error message below,
 	 * then the number of registered messages (fdsc)
 	 * differs from the number of messages in the above list.
@@ -945,9 +956,9 @@ int sdlog2_thread_main(int argc, char *argv[])
 //				LOGBUFFER_WRITE_AND_COUNT(GPS);
 //			}
 
-			ifds += 2;
 			/* --- SENSOR COMBINED --- */
-			if (fds[ifds++].revents & POLLIN) {
+			ifds = 3;
+			if (fds[ifds].revents & POLLIN) {
 				orb_copy(ORB_ID(sensor_combined), subs.sensor_sub, &buf.sensor);
 				bool write_IMU = false;
 				bool write_SENS = false;
@@ -1179,6 +1190,16 @@ int sdlog2_thread_main(int argc, char *argv[])
 //					LOGBUFFER_WRITE_AND_COUNT(ESC);
 //				}
 //			}
+
+			/* --- Battery --- */
+			ifds = 19;
+			if (fds[ifds].revents & POLLIN) {
+				orb_copy(ORB_ID(battery_status), subs.battery_sub, &buf.battery);
+					log_msg.msg_type = LOG_BAT_MSG;
+					log_msg.body.log_BAT.voltage_v = buf.battery.voltage_v;
+					LOGBUFFER_WRITE_AND_COUNT(BAT);
+			}
+
 
 #ifdef SDLOG2_DEBUG
 				printf("fill rp=%i wp=%i count=%i\n", lb.read_ptr, lb.write_ptr, logbuffer_count(&lb));

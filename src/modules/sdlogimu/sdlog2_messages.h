@@ -38,6 +38,7 @@
  * Log messages and structures definition.
  *
  * @author Anton Babushkin <anton.babushkin@me.com>
+ * Modified by Peter Adamczyk <pgadamczyk@yahoo.com>
  */
 
 #ifndef SDLOG2_MESSAGES_H_
@@ -244,6 +245,12 @@ struct log_ESC_s {
 	uint16_t esc_setpoint_raw;
 };
 
+/* --- BAT - BATTERY STATE --- */
+#define LOG_BAT_MSG 19
+struct log_BAT_s {
+	float voltage_v;
+};
+
 #pragma pack(pop)
 
 /* construct list of all message formats */
@@ -266,7 +273,8 @@ static const struct log_format_s log_formats[] = {
 	LOG_FORMAT(FLOW, "hhfffBB", "RawX,RawY,CompX,CompY,Dist,Q,SensID"),
 	LOG_FORMAT(GPOS, "LLffff", "Lat,Lon,Alt,VelN,VelE,VelD"),
 	LOG_FORMAT(GPSP, "BLLfffbBffff", "AltRel,Lat,Lon,Alt,Yaw,LoiterR,LoiterDir,NavCmd,P1,P2,P3,P4"),
-	LOG_FORMAT(ESC, "HBBBHHHHHHfH", "Counter,NumESC,Conn,No,Version,Adr,Volt,Amp,RPM,Temp,SetP,SetPRAW"),
+	LOG_FORMAT(ESC, "HBBBHHHHHHfH", "Cntr,NumESC,Conn,No,Version,Adr,Volt,Amp,RPM,Temp,SetP,SetPRAW"),
+	LOG_FORMAT(BAT, "f", "Voltage"),
 };
 
 static const int log_formats_num = sizeof(log_formats) / sizeof(struct log_format_s);
