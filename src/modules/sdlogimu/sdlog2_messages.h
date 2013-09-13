@@ -274,7 +274,7 @@ static const struct log_format_s log_formats[] = {
 	LOG_FORMAT(GPOS, "LLffff", "Lat,Lon,Alt,VelN,VelE,VelD"),
 	LOG_FORMAT(GPSP, "BLLfffbBffff", "AltRel,Lat,Lon,Alt,Yaw,LoiterR,LoiterDir,NavCmd,P1,P2,P3,P4"),
 	LOG_FORMAT(ESC, "HBBBHHHHHHfH", "Cntr,NumESC,Conn,No,Version,Adr,Volt,Amp,RPM,Temp,SetP,SetPRAW"),
-	LOG_FORMAT(BAT, "f", "Voltage"),
+	LOG_FORMAT(BAT, "f", "Voltage"), 	//PGA
 };
 
 static const int log_formats_num = sizeof(log_formats) / sizeof(struct log_format_s);

@@ -77,6 +77,12 @@
  *   Data cache                    : ON
  *   Require 48MHz for USB OTG FS, : Enabled
  *   SDIO and RNG clock
+ *
+ *   ****** MODIFIED by PGA:
+ *   PLLN = 240
+ *   PLLP = 4 (60 MHz)
+ *   PLLQ = 5 (48 MHz)
+ *
  */
 
 /* HSI - 16 MHz RC factory-trimmed
@@ -90,7 +96,7 @@
 #define STM32_HSI_FREQUENCY     16000000ul
 #define STM32_LSI_FREQUENCY     32000
 #define STM32_HSE_FREQUENCY     STM32_BOARD_XTAL
-//#define STM32_LSE_FREQUENCY     32768
+//#define STM32_LSE_FREQUENCY     32768 			// Offboard HSE oscillator/resonator not supplied with PX4
 
 /* Main PLL Configuration.
  *
@@ -105,23 +111,37 @@
  *         = 48,000,000
  */
 
+/* PGA Modifications
+ *
+ * PLL source is HSE
+ * PLL_VCO = (STM32_HSE_FREQUENCY / PLLM) * PLLN
+ *         = (8,000,000 / 8) * 240
+ *         = 240,000,000
+ * SYSCLK  = PLL_VCO / PLLP
+ *         = 240,000,000 / 4 = 60,000,000
+ * USB OTG FS, SDIO and RNG Clock
+ *         =  PLL_VCO / PLLQ
+ *         = 240,000,000 / 5
+ *         = 48,000,000
+ */
+
 #define STM32_PLLCFG_PLLM       RCC_PLLCFG_PLLM(24)
-#define STM32_PLLCFG_PLLN       RCC_PLLCFG_PLLN(336)
-#define STM32_PLLCFG_PLLP       RCC_PLLCFG_PLLP_2
-#define STM32_PLLCFG_PLLQ       RCC_PLLCFG_PLLQ(7)
+#define STM32_PLLCFG_PLLN       RCC_PLLCFG_PLLN(240)  // RCC_PLLCFG_PLLN(336)  // changed by PGA
+#define STM32_PLLCFG_PLLP       RCC_PLLCFG_PLLP_4     // RCC_PLLCFG_PLLP_2		// changed by PGA
+#define STM32_PLLCFG_PLLQ       RCC_PLLCFG_PLLQ(5)		// RCC_PLLCFG_PLLQ(7)	// changed by PGA
 
-#define STM32_SYSCLK_FREQUENCY  168000000ul
+#define STM32_SYSCLK_FREQUENCY  60000000ul 			// 	168000000ul		// changed by PGA
 
-/* AHB clock (HCLK) is SYSCLK (168MHz) */
+/* AHB clock (HCLK) is SYSCLK (60 MHz PGA)			 //(168MHz) */
 
 #define STM32_RCC_CFGR_HPRE     RCC_CFGR_HPRE_SYSCLK  /* HCLK  = SYSCLK / 1 */
 #define STM32_HCLK_FREQUENCY    STM32_SYSCLK_FREQUENCY
 #define STM32_BOARD_HCLK        STM32_HCLK_FREQUENCY  /* same as above, to satisfy compiler */
 
-/* APB1 clock (PCLK1) is HCLK/4 (42MHz) */
+/* APB1 clock (PCLK1) is HCLK/2 (30 MHz, PGA)   		// HCLK/4 (42MHz) */
 
-#define STM32_RCC_CFGR_PPRE1    RCC_CFGR_PPRE1_HCLKd4     /* PCLK1 = HCLK / 4 */
-#define STM32_PCLK1_FREQUENCY   (STM32_HCLK_FREQUENCY/4)
+#define STM32_RCC_CFGR_PPRE1    RCC_CFGR_PPRE1_HCLKd2   // PGA   /* PCLK1 = HCLK / 2 */  //RCC_CFGR_PPRE1_HCLKd4     /* PCLK1 = HCLK / 4 */
+#define STM32_PCLK1_FREQUENCY   (STM32_HCLK_FREQUENCY/2)	//  (STM32_HCLK_FREQUENCY/4) // changed PGA
 
 /* Timers driven from APB1 will be twice PCLK1 */
 
@@ -135,10 +155,10 @@
 #define STM32_APB1_TIM13_CLKIN  (2*STM32_PCLK1_FREQUENCY)
 #define STM32_APB1_TIM14_CLKIN  (2*STM32_PCLK1_FREQUENCY)
 
-/* APB2 clock (PCLK2) is HCLK/2 (84MHz) */
+/* APB2 clock (PCLK2) is HCLK (60 MHz, not divided - PGA)  // HCLK/2 (84MHz) */
 
-#define STM32_RCC_CFGR_PPRE2    RCC_CFGR_PPRE2_HCLKd2     /* PCLK2 = HCLK / 2 */
-#define STM32_PCLK2_FREQUENCY   (STM32_HCLK_FREQUENCY/2)
+#define STM32_RCC_CFGR_PPRE2    RCC_CFGR_PPRE2_HCLK // not divided. // changed PGA           // RCC_CFGR_PPRE2_HCLKd2     /* PCLK2 = HCLK / 2 */
+#define STM32_PCLK2_FREQUENCY   (STM32_HCLK_FREQUENCY)	// (STM32_HCLK_FREQUENCY/2) 	// changed PGA
 
 /* Timers driven from APB2 will be twice PCLK2 */
 
@@ -153,7 +173,7 @@
  * Note: TIM1,8 are on APB2, others on APB1
  */
 
-#define STM32_TIM18_FREQUENCY   (2*STM32_PCLK2_FREQUENCY)
+#define STM32_TIM18_FREQUENCY   STM32_PCLK2_FREQUENCY  // APB2 is not divided; therefore it's the same as PCLK2 // changed by PGA  // (2*STM32_PCLK2_FREQUENCY)
 #define STM32_TIM27_FREQUENCY   (2*STM32_PCLK1_FREQUENCY)
 
 /* High-resolution timer

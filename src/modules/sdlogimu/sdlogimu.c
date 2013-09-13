@@ -529,7 +529,7 @@ void write_formats(int fd)
 	int i;
 
 	for (i = 0; i < log_formats_num; i++) {
-		log_format_packet.body = log_formats[i];
+		log_format_packet.body = log_formats[i]; // This is where the headers get written // see sdlog2_messages.c //PGA
 		log_bytes_written += write(fd, &log_format_packet, sizeof(log_format_packet));
 	}
 
