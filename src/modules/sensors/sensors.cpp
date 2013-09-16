@@ -1408,7 +1408,7 @@ Sensors::task_main()
 	orb_set_interval(_vstatus_sub, 200);
 
 	/* rate limit gyro to 250 Hz (the gyro signal is lowpassed accordingly earlier) */
-	orb_set_interval(_gyro_sub, 4);
+	orb_set_interval(_gyro_sub, 3);  // originally 4 = 4ms
 
 	/*
 	 * do advertisements
